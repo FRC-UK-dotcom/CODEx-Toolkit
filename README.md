@@ -12,6 +12,8 @@ be installed with:
 pip3 install lxml
 ```
 
+Note: Arelle also has some dependencies if you just use the GitHub source code.
+
 Arelle can be obtained from [GitHub](https://github.com/Arelle/Arelle).
 
 The code will look for the Arelle repository in a sibiling directory of this
@@ -37,6 +39,13 @@ The parser can be run in one of two modes. Either stripping data into csv files 
 immediate analysis (and/or later database load) or directly into a SQL Server database.
 
 Database credentials need to be specified in the config.json file.
+
+```
+"server": "a.server",
+"database": "db",
+"username": "auser",
+"password": "apassword",
+```
 
 It can be run from the command line with various flag settings. The scripts have also
 been organised to make it posible to interact with components of the API.
@@ -67,6 +76,11 @@ frc-load.py --cache-dir cache out-dir FCA
 ```
 
 The Companies House API requires a key. You need to register at <https://developer.company-information.service.gov.uk>
+The key then needs to be stored in the config.json file
+
+```
+"api_key_ch": "S0meR8nd0mStu55"
+```
 
 The parser works off a list of filing identifiers (currently LEI or Company Registration Number)
 
@@ -77,11 +91,10 @@ These can be specified in one of three ways:
 3. sql server table and column --list Table.Column
 
 
-
 ## Outputs
 
-The script can create a set of core pre-defined csv files matchiing the Tables that can alternatively be
-updated automatically from these scripts:
+The script can create a set of core pre-defined csv files (future version!) matching the Tables that can alternatively be
+updated automatically to a sql server database from these scripts:
 
 1. Filings
 2. FilingsExtraDetail
@@ -93,7 +106,7 @@ updated automatically from these scripts:
 
 The columns required for each table are defined in the dbtables directory.
 
-The db flag must be set for tables to be updated from the parser
+The db flag must be set for database Tables to be updated from the parser
 
 ```
 frc-load.py --cache-dir --list Table.Column --db cache out-dir FCA
@@ -105,12 +118,12 @@ If the script is modified to report new data points, re-processing can be
 forced by specifying the `-f` option, or by deleting the contents of the output
 directory.
 
+
 ## Filtering
 
 The script has various options for filtering which filings are processed:
 
-* `-l LEI` will limit to the specified LEI.  The option can be repeated to
-  specify multiple LEIs.
+* `-l LEI` will limit to the specified LEI.  The option can be repeated to specify multiple LEIs.
 * `--country COUNTRY` will limit to the specified country code.  The option can be repeated to specify multiple countries.
 * `--from YYYY-MM-DD` will limit to filings with an end date of or after the specified date.
 * `--limit N` will limit the script to processing at most N filings for each Filer ie. per LEI 
