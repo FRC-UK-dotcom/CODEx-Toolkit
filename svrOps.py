@@ -3,13 +3,13 @@ import pandas as pd
 import datetime
 
 
-def openConn(db, conn_str=None):
+def openConn(secrets, conn_str=None):
     if conn_str is None:        
         driver= '{ODBC Driver 17 for SQL Server}' 
-        server = '' 
-        database = db 
-        username = '' 
-        password = ''        
+        server = 'tcp:' + secrets.get('server') 
+        database = secrets.get('database') 
+        username = secrets.get('username') 
+        password = secrets.get('password')      
         conn_str= 'DRIVER=' + driver + ';SERVER=' +server + ';PORT=1433;DATABASE=' + database +';UID=' + username + ';PWD=' + password        
     conn = pdb.connect(conn_str)
     return conn
@@ -17,9 +17,9 @@ def openConn(db, conn_str=None):
 # Option to limit results returned
 # If result total is less than result total required by top then values between start index and end index are returned.
 # Top set to zero (default) brings all results back unless a starting point is set in which case start to end is returned.
-def getTable(qry=None, tbl = None, top = 0, start=0):
+def getTable(secrets, qry=None, tbl = None, top = 0, start=0):
     
-    conn = openConn('sqldb-frc-dev-codex-parserpoc')
+    conn = openConn(secrets)
     cursor = conn.cursor()
     
     if qry is None:
@@ -36,12 +36,13 @@ def getTable(qry=None, tbl = None, top = 0, start=0):
     else:
         return results[start-1:top + start - 1]
     
-def getFieldFromTable(field, tbl, top=0, start=0):
+def getFieldFromTable(secrets, field, tbl, top=0, start=0):
     qry = f'Select {field} from {tbl}'
-    return getTable(qry, top=top, start=start)
+    return getTable(secrets, qry, top=top, start=start)
 
-def loadRecord(tblNm, cols, rec):
-    conn = openConn('')
+def loadRecord(secrets, tblNm, cols, rec):
+    conn = openConn(secrets)
+    #conn = openConn('FRCLab1')
     cursor = conn.cursor()
     #values = ','.join(f"'{r}'" for r in rec)
     #sql = f"INSERT INTO {tblNm} ({','.join(cols)}) VALUES ({values})"
@@ -64,9 +65,9 @@ def loadRecord(tblNm, cols, rec):
     cursor.close()
     return id
 
-def loadTbl(tblNm, cols, data):  
+def loadTbl(secrets, tblNm, cols, data):  
     
-    conn = openConn('')
+    conn = openConn(secrets)
     cursor = conn.cursor()
     
     valuePlaceHolders =  "?" + ",?" * (len(cols) - 1)
@@ -80,32 +81,4 @@ def loadTbl(tblNm, cols, data):
     return True
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    conn.commit()
-    cursor.close()
     

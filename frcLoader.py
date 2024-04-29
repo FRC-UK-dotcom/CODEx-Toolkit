@@ -71,6 +71,7 @@ KEY_VALUES = {
 
 # Global Variables used in loading db - Added JT - 22/03/24
 locs = {} # File/directory locations for processing.
+secrets = {}
 register = None
 #filing should be unique descriptor of the filing eg. FilerID, Report End, Version Number, Country if applicable. May or may not correspond the name of package stored in register.
 filing = None
@@ -91,13 +92,23 @@ arelle = None
 def getXBRL():
     return arelle
 
+def startArelle(pDir):
+    global arelle
+    arelle = xbrlanalyse.ArelleLoader()
+
+    package_dir = pDir if pDir is not None else os.path.join(os.path.dirname(__file__), "packages")
+    print("Loading packages from %s" % package_dir)
+    arelle.loadPackagesFromDir(package_dir)
 
 def setupLoading(p):
     global params
     global arelle
     global register
     global locs
+    global secrets
+
     params = p
+    secrets = load_json('config.json')
 
     # Neither essential params are present:
     if params['lei'] is None and params['list'] is None:
@@ -179,7 +190,7 @@ def getCHFilingMetaData():
     headers = {}
     headers["Accept"] = "application/json"
     url = f"{APIS['ch']}{filingLEI}/filing-history?category=accounts"
-    APIKey = ""
+    APIKey = secrets.get('api_key_ch')
     # No password required so set to empty string. APIKey is basically the username.
     # Deals with Base64 conversion issue.
     auth = HTTPBasicAuth(APIKey,'')
@@ -235,7 +246,7 @@ def getFOFilingMetaData(lei):
 
 def getLEIsFromList(field, fName = None, dbTbl = None, top = 0, start = 0):
     if dbTbl is not None:
-        return svrOps.getFieldFromTable(field, dbTbl, top, start)
+        return svrOps.getFieldFromTable(secrets, field, dbTbl, top, start)
     
 #
 # Find the ultimate parent-child parents of the given concept across all ELRs
@@ -667,12 +678,12 @@ def loadDb(fsd):
                 dataList = fd[tblDef[0]]
                 if len(dataList) > 1: # A list maybe empty eg. Anchors
                     ltd = dataList[1:]            
-                    loadTbl(nm, tblDef[1], ltd)
+                    svrOps.loadTbl(secrets, nm, tblDef[1], ltd)
                     tables += 1 
             loaded += 1
             print("%s Main Tables loaded. Loading finished %s" % (tables, fd['filing']))
             # Loads extra filing details
-            svrOps.loadRecord('FilingsExtraDetail',['Filing_ID', 'Vendor', 'ZipSize','ConcealedFacts','HiddenFacts'],[fd['filingID'], fd['vendor'], fd['zip-size'], fd['concealed-facts'], len(fd['hidden-facts'])])
+            svrOps.loadRecord(secrets, 'FilingsExtraDetail',['Filing_ID', 'Vendor', 'ZipSize','ConcealedFacts','HiddenFacts'],[fd['filingID'], fd['vendor'], fd['zip-size'], fd['concealed-facts'], len(fd['hidden-facts'])])
             print("Extra Table loaded. Loading finished %s" % (fd['filing']))
     
     print("Loaded to Db %s filings for %s" % (loaded, filingLEI))
@@ -783,7 +794,7 @@ def loadFiling(meta_info):
         # New filng id is returned aas filing meta data is added to db. Filing Id used when storing to db tables.
         # If filing already exists in db then None is returned. Note register will be added to Primary Key so the same filing (different filingID) can be added to db.
         # Could add new col with a pointer to unique filingID so data is only stored once? At moment it would be repeatedly stored (be the same data?) with different filngs id's
-        filingID = svrOps.loadRecord('Filings',['Register', 'LEI', 'Entity_ID','Filing','Filing_EndDate','Filing_PubDate','Filing_SubDate','DisclosureLevel'],[register, filingLEI, filingLEI, filing, filingEndDate, meta_info['publication_date'],meta_info['submitted_date'],meta_info['disclosure_level']])
+        filingID = svrOps.loadRecord(secrets, 'Filings',['Register', 'LEI', 'Entity_ID','Filing','Filing_EndDate','Filing_PubDate','Filing_SubDate','DisclosureLevel'],[register, filingLEI, filingLEI, filing, filingEndDate, meta_info['publication_date'],meta_info['submitted_date'],meta_info['disclosure_level']])
         if filingID is None:
             print("Processing Aborted %s - already in db" % filing)
             return {}         
@@ -794,7 +805,7 @@ def loadFiling(meta_info):
     
 def loadExtraDetails():
     xDetails = {}
-    if locs['report_package_path'] is not None and Path(locs['report_package_path']).ext == 'zip':
+    if locs['report_package_path'] is not None and Path(locs['report_package_path']).suffix == '.zip':
         xDetails['zip-size'] = os.path.getsize(locs['report_package_path'])
     else:
         xDetails['zip-size'] = None
