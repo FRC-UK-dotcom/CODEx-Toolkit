@@ -1,7 +1,19 @@
 # FRC Parse and Load Tools
 
-This repository contains Python scripts for parsing UK ixbrl files and loading
-them into sql database. The scripts use the Arelle parser to breakdown the iXBRL.
+This repository contains Python scripts for parsing UK iXBRL files and loading
+them into a sql server database. The scripts use the Arelle parser to breakdown the iXBRL.
+
+The scripts were commissioned by the UK Financial Reporting Council (FRC) as proof of concept on
+how to parse and load iXBRL filings data for comparative analysis.
+
+It builds on the work carried out by Paul Warren of XBRL International on behalf of
+the FRC in creating the frc-analyse project
+
+Thanks also to Robert Marks of the FRC for the work he did in prooving access to the FCA API
+and also Austin Matherne at Workiva for helping me uncover some of the more reclusive attributes
+exposed by the Arelle parser.
+
+Jim Truscott 2024
 
 ## Dependencies
 
