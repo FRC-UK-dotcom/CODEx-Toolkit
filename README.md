@@ -7,7 +7,7 @@ The scripts were commissioned by the UK Financial Reporting Council (FRC) as pro
 how to parse and load iXBRL filings data for comparative analysis.
 
 It builds on the work carried out by Paul Warren of XBRL International on behalf of
-the FRC in creating the frc-analyse project
+the FRC in creating the frc-analyse project.
 
 Thanks also to Robert Marks of the FRC for the work he did in prooving access to the FCA API
 and also Austin Matherne at Workiva for helping me uncover some of the more reclusive attributes
