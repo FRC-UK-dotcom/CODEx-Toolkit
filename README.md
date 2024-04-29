@@ -116,7 +116,8 @@ that can alternatively be updated automatically to a sql server database from th
 6. Anchors
 7. Namespaces
 
-The columns required for each table are defined in the dbtables directory.
+The columns required for each table are defined in the dbtables directory. These definitions are currently fixed.
+You cannot define your own customised versions.
 
 The db flag must be set for database Tables to be updated from the parser
 
