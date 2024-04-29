@@ -1,6 +1,7 @@
 {
 	"server": "",
+	"database": "",
 	"username": "",
 	"password": "",
-	"api_key_ch": "",
+	"api_key_ch": ""
 }
