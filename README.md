@@ -12,7 +12,7 @@ be installed with:
 pip3 install lxml
 ```
 
-Note: Arelle also has some dependencies if you just use the GitHub source code.
+Note: Arelle also has some dependencies if you just use the GitHub source code rather than install it.
 
 Arelle can be obtained from [GitHub](https://github.com/Arelle/Arelle).
 
@@ -93,8 +93,8 @@ These can be specified in one of three ways:
 
 ## Outputs
 
-The script can create a set of core pre-defined csv files (future version!) matching the Tables that can alternatively be
-updated automatically to a sql server database from these scripts:
+The script can create a set of core pre-defined csv files (future version!) matching the Tables 
+that can alternatively be updated automatically to a sql server database from these scripts:
 
 1. Filings
 2. FilingsExtraDetail
@@ -123,10 +123,10 @@ directory.
 
 The script has various options for filtering which filings are processed:
 
-* `-l LEI` will limit to the specified LEI.  The option can be repeated to specify multiple LEIs.
+* `--LEI` will limit to the specified LEI.  The option can be repeated to specify multiple LEIs.
 * `--country COUNTRY` will limit to the specified country code.  The option can be repeated to specify multiple countries.
 * `--from YYYY-MM-DD` will limit to filings with an end date of or after the specified date.
 * `--limit N` will limit the script to processing at most N filings for each Filer ie. per LEI 
 
-
+You can use the --LEI flag to specify Company Registration Numbers instead for Company House Filings.
 
