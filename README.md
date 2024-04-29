@@ -46,7 +46,7 @@ frc-load.py --cache-dir FCA cache out-dir
 The parser can be run in one of two modes. Either stripping data into csv files for
 immediate analysis (and/or later database load) or directly into a SQL Server database.
 
-Database credentials need to be specified in config.json file.
+Database credentials need to be specified in the config.json file.
 
 It can be run from the command line with various flag settings. The scripts have also
 been organised to make it posible to interact with components of the API.
