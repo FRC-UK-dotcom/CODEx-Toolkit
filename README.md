@@ -1,14 +1,11 @@
-### FRC Parse and Load Tools
+# FRC Parse and Load Tools
 
-This repository contains Python scripts for performing initial analysis of ESEF
-filings.  The scripts work on a local copy of the filings.xbrl.org filing
-repository and produce a JSON file containing various datapoints for each
-filing.  This JSON file is intended to be used as an input for further
-analysis.
+This repository contains Python scripts for parsing UK ixbrl files and loading
+them into sql database. The scripts use the Arelle parser to breakdown the iXBRL.
 
 ## Dependencies
 
-The analysis tools depends on Arelle, and the Python `lxml` module.  `lxml` can
+The tools depend on Arelle, and the Python `lxml` module.  `lxml` can
 be installed with:
 
 ```
@@ -30,35 +27,87 @@ cloned into a `work` directory:
 Alternatively, the location of the Arelle repository can be set using the
 `ARELLE` environment variable.
 
-## The filings repository
 
 
+## The filings repositories
 
-## Running the analysis
+ixbrl files can be downloaded from one of three repositories:
 
-
-
-## From filings.xbrl.org
-
-
+1. FCA: FCA
+2. CH: Companies House
+3. FO: Filings.org
 
 ```
-frc-analyse --cache-dir cache  https://filings.xbrl.org/index.json out-dir
+frc-load.py --cache-dir FCA cache out-dir
+```
+
+## Running the parser
+
+The parser can be run in one of two modes. Either stripping data into csv files for
+immediate analysis (and/or later database load) or directly into a SQL Server database.
+
+Database credentials need to be specified in config.json file.
+
+It can be run from the command line with various flag settings. The scripts have also
+been organised to make it posible to interact with components of the API.
+
+A minimum of three flags need to be set for it to parse filings:
+
+```
+frc-load.py --cache-dir cache out-dir index
 ```
 
 "cache" is the name of a directory where files download from filings.xbrl.org will be stored.
 
-The last argument is a directory where output files will be created.
+The "out-dir" is a directory where output files will be created.
+
+The final compulsory argument is the index the parser will use to find iXBRL filings
+
+
+## The filings repositories
+
+ixbrl files can be downloaded from one of three repositories:
+
+1. FCA: FCA
+2. CH: Companies House
+3. FO: Filings.org
+
+```
+frc-load.py --cache-dir cache out-dir FCA
+```
+
+The parser works off a list of filing identifiers (currently LEI or Company Registration Number)
+
+These can be specified in one of three ways:
+
+1. comma separated list in the command line --LEI 123456,78901234
+2. csv file --List alist.csv (future version!)
+3. sql server table and column --list Table.Column
+
+
 
 ## Outputs
 
-The script will create a JSON file for each filing in the index, and when the
-run is completed, it will create a combined, summary `all_filings.json` file.
+The script can create a set of core pre-defined csv files matchiing the Tables that can alternatively be
+updated automatically from these scripts:
 
-If the script is re-run with the same output directory, any existing per-filing
-JSON files will be re-used, rather than re-processing the filing.  This allows
-an interrupted process to be resumed, or for the output to be quickly updated
-to include any new filings.
+1. Filings
+2. FilingsExtraDetail
+3. Facts
+4. Dims
+5. Concepts
+6. Anchors
+7. Namespaces
+
+The columns required for each table are defined in the dbtables directory.
+
+The db flag must be set for tables to be updated from the parser
+
+```
+frc-load.py --cache-dir --list Table.Column --db cache out-dir FCA
+```
+
+## Force
 
 If the script is modified to report new data points, re-processing can be
 forced by specifying the `-f` option, or by deleting the contents of the output
@@ -72,9 +121,7 @@ The script has various options for filtering which filings are processed:
   specify multiple LEIs.
 * `--country COUNTRY` will limit to the specified country code.  The option can be repeated to specify multiple countries.
 * `--from YYYY-MM-DD` will limit to filings with an end date of or after the specified date.
-* `--limit N` will limit the script to processing at most N new filings.  
+* `--limit N` will limit the script to processing at most N filings for each Filer ie. per LEI 
 
-Note that in all cases, the results will be combined with any filings for which
-processed outputs already exist in `out-dir`, regardless of whether they meet
-the specified filters.
+
 
