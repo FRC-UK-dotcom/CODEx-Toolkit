@@ -27,16 +27,6 @@ cloned into a `work` directory:
 Alternatively, the location of the Arelle repository can be set using the
 `ARELLE` environment variable.
 
-
-
-## The filings repositories
-
-ixbrl files can be downloaded from one of three repositories:
-
-1. FCA: FCA
-2. CH: Companies House
-3. FO: Filings.org
-
 ```
 frc-load.py --cache-dir FCA cache out-dir
 ```
@@ -66,7 +56,7 @@ The final compulsory argument is the index the parser will use to find iXBRL fil
 
 ## The filings repositories
 
-ixbrl files can be downloaded from one of three repositories:
+iXBRL files can be downloaded from one of three repositories:
 
 1. FCA: FCA
 2. CH: Companies House
@@ -75,6 +65,8 @@ ixbrl files can be downloaded from one of three repositories:
 ```
 frc-load.py --cache-dir cache out-dir FCA
 ```
+
+The Companies House API requires a key. You need to register at <https://developer.company-information.service.gov.uk>
 
 The parser works off a list of filing identifiers (currently LEI or Company Registration Number)
 
